@@ -17,7 +17,7 @@ void say_hi()
 {
   Serial.println("Showing Hi Method!");
   servo_arm.write(60);
-  delay(2000);
+  delay(1500);
   servo_arm.write(start_pos);
   delay(50);
 }
@@ -42,9 +42,9 @@ void angry(int angryCt = 0)
   }
   if (angryCt == 6)
   {
-    delay(2000);
+    delay(1500);
     servo_arm.write(target_pos);
-    delay(250);
+    delay(1000);
     servo_arm.write(start_pos);
     angryCt = 0;
     Serial.println("Returning to loop method!");
