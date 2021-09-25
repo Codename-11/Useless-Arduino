@@ -10,7 +10,7 @@ int target_pos = 38; // replace with target pos.
 int start_pos = 160; // start pos.
 int switchState;
 int attempts = 0;
-
+int randomNumber; // create an int for a random number
 
 // Setup
 void setup()
@@ -72,6 +72,38 @@ void angry(int angryCt = 0)
   }
 }
 
+// Frustrated Method
+void frustrated(int frustratedCt = 0)
+{
+  Serial.println("Showing Frustrated Method!");
+  servo_arm.write(55);
+  delay(500);
+  servo_arm.write(start_pos);
+  delay(300);
+  for(frustratedCt = 0; frustratedCt <= 3; frustratedCt++)
+  {
+    servo_arm.write(60);
+    delay(100);
+    servo_arm.write(start_pos);
+    delay(100);
+    Serial.println("frustratedCt: ");
+    Serial.println(frustratedCt);
+  }
+  if (frustratedCt == 4)
+  {
+    delay(500);
+    servo_arm.write(target_pos);
+    delay(1500);
+    servo_arm.write(start_pos);
+    delay(1000);
+    servo_arm.write(target_pos);
+    delay(2000);
+    servo_arm.write(start_pos);
+    frustratedCt = 0;
+    Serial.println("Returning to loop method!");
+  }
+}
+
 // Error Method
 void error()
 {
@@ -101,7 +133,37 @@ void error()
   }
 }
 
-// Main Program Loop:
+
+// Setup
+void setup()
+{
+  // Initialize serial
+  Serial.begin(9600);
+
+  // if analog input pin 0 is unconnected, random analog
+  // noise will cause the call to randomSeed() to generate
+  // different seed numbers each time the sketch runs.
+  // randomSeed() will then shuffle the random function.
+  randomSeed(analogRead(0));
+
+  // Initialize servo
+  servo_arm.attach(9);
+  // Set pinMode
+  pinMode(10, INPUT);
+  digitalWrite(10, HIGH);
+  // Move servo to start pos (160 deg)
+  servo_arm.write(start_pos);
+  // Print action to console
+  Serial.println("Moving to start pos!");
+  // Say hi?
+  Serial.println("Calling Hi Method!");
+  say_hi();
+  delay(50);
+  // Print starting loop to console
+  Serial.println("Starting Loop...");
+}
+
+// Main Program:
 void loop()
 { 
   // Read switchState var
@@ -120,7 +182,7 @@ void loop()
       Serial.println("Switch toggled! Attempting to turn off!");
       delay(50);
       // Move servo to target deg. (Known hit @ 38 deg)
-      servo_arm.write(70);
+      servo_arm.write(60);
       delay(750);
       servo_arm.write(target_pos); 
       delay(500);
@@ -138,13 +200,33 @@ void loop()
       Serial.flush();
       break;
     }
-    if (attempts == 4 && switchState == LOW)
+    while (switchState == LOW && attempts >= 4)
     {
-      // Call angry method
-      Serial.println("Calling Angry Method!");
-      angry();
-      delay(50);
-      attempts = 0;
+      // Generate randon number
+      randomNumber = random(5);
+      Serial.println("Random Number is: ");
+      Serial.println(randomNumber);
+      // Call frustrated method if randomNumber <= 3
+      if (randomNumber <= 3)
+      {
+        Serial.println("randomNumber <= 4: Calling Frustrated Method!");
+        frustrated();
+        delay(50);
+      }
+      // Call angry method if randomNumber == 5
+      if (randomNumber >=4)
+      {
+        Serial.println("randomNumber >= 5:Calling Angry Method!");
+        angry();
+        delay(50);
+        attempts = 0;
+      }
+      else
+      {
+        break;
+      }
+      
+      break;
     }
     break;
   }
