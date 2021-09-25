@@ -13,6 +13,13 @@ int attempts = 0;
 int randomNumber; // create an int for a random number
 
 
+// Slow Move Variables
+int increment = 4; // Step increment for slow_move
+int del = 50; // Delay between steps
+int prev_pos; // Previous pos to start slow move
+int new_pos; // New position to move to
+
+
 // Hi Method
 void say_hi()
 {
@@ -80,6 +87,25 @@ void frustrated(int frustratedCt = 0)
     servo_arm.write(start_pos);
     frustratedCt = 0;
     Serial.println("Returning to loop method!");
+  }
+}
+
+// Slow Move to target
+void slow_move()
+{
+  Serial.println("Starting slow_move!");
+  switchState = digitalRead(10);
+  prev_pos = servo_arm.read();
+  // Loop while switch is still toggled if missed.
+  for (new_pos = prev_pos; switchState == LOW; new_pos -= increment)
+  {
+    Serial.println("Moving to new_pos:!");
+    Serial.println(new_pos);
+    servo_arm.write(new_pos);
+    Serial.println("Delaying...");
+    Serial.println(del);
+    delay(del);
+    switchState = digitalRead(10);
   }
 }
 
