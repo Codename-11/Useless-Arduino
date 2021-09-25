@@ -55,7 +55,7 @@ void angry(int angryCt = 0)
     servo_arm.write(start_pos);
   }
   servo_arm.write(peek_pos);
-  delay(1000);
+  delay(1500);
   servo_arm.write(start_pos);
   Serial.println("Returning to loop method!");
 }
@@ -91,7 +91,7 @@ void frustrated(int frustratedCt = 0)
     Serial.println("Returning to loop method!");
   }
   servo_arm.write(peek_pos);
-  delay(1000);
+  delay(1500);
   servo_arm.write(start_pos);
 }
 
@@ -117,7 +117,7 @@ void slow_move()
   servo_arm.write(start_pos);
   delay(500);
   servo_arm.write(peek_pos);
-  delay(1000);
+  delay(1500);
   servo_arm.write(start_pos);
   Serial.println("Returning to loop method!");
 }
@@ -147,6 +147,8 @@ void error()
       // Delay
       delay(100);
     }
+    delay(500);
+    servo_arm.write(start_pos);
     break;
   }
 }
@@ -226,8 +228,8 @@ void loop()
       Serial.println("Random Number is: ");
       Serial.println(randomNumber);
       delay(1000);
-      // Call slow_move method if randomNumber <= 2
-      if (randomNumber <= 2)
+      // Call slow_move method if randomNumber <= 3
+      if (randomNumber <= 3)
       {
         Serial.println("randomNumber <= 2: Calling Slow Move Method!");
         slow_move();
@@ -239,7 +241,7 @@ void loop()
           error();
         }
       }      
-      // Call frustrated method if randomNumber >= 3 & <= 4
+      // Call frustrated method if randomNumber = 4
       if (randomNumber == 4)
       {
         Serial.println("randomNumber <= 4: Calling Frustrated Method!");
@@ -252,7 +254,7 @@ void loop()
         }
       }
       // Call angry method if randomNumber == 5
-      if (randomNumber ==5)
+      if (randomNumber == 5)
       {
         Serial.println("randomNumber >= 5:Calling Angry Method!");
         angry();
