@@ -4,13 +4,14 @@
 
 
 // Variables
-Servo servo_arm;
-int pos = 90;
-int target_pos = 38; // replace with target pos.
-int start_pos = 160; // start pos.
-int switchState;
-int attempts = 0;
-int randomNumber; // create an int for a random number
+Servo servo_arm; // Set servo_arm as Servo
+int pos = 90; // Default start positon
+int target_pos = 38; // Replace with target position
+int start_pos = 160; // Replace with start position
+int peek_pos = 70; // Replace with peek position
+int switchState; // Int for switch state
+int attempts; // Int for attempts
+int randomNumber; // Int for a random number
 
 
 // Slow Move Variables
@@ -24,51 +25,52 @@ int new_pos; // New position to move to
 void say_hi()
 {
   Serial.println("Showing Hi Method!");
-  servo_arm.write(60);
+  servo_arm.write(peek_pos);
   delay(1500);
   servo_arm.write(start_pos);
-  delay(50);
 }
 
 // Angry Method
 void angry(int angryCt = 0)
 {
   Serial.println("Showing Angry Method!");
-  servo_arm.write(55);
+  servo_arm.write(peek_pos);
   delay(500);
   servo_arm.write(start_pos);
   delay(300);
   for(angryCt = 0; angryCt <= 5; angryCt++)
   {
-    servo_arm.write(60);
+    servo_arm.write(peek_pos);
     delay(100);
     servo_arm.write(start_pos);
     delay(100);
     Serial.println("AngryCt: ");
     Serial.println(angryCt);
   }
-  if (angryCt == 6)
+  for (angryCt = 6; angryCt >= 6 && angryCt <= 9; angryCt++)
   {
     delay(1500);
     servo_arm.write(target_pos);
     delay(1000);
     servo_arm.write(start_pos);
-    angryCt = 0;
-    Serial.println("Returning to loop method!");
   }
+  servo_arm.write(peek_pos);
+  delay(1000);
+  servo_arm.write(start_pos);
+  Serial.println("Returning to loop method!");
 }
 
 // Frustrated Method
 void frustrated(int frustratedCt = 0)
 {
   Serial.println("Showing Frustrated Method!");
-  servo_arm.write(55);
+  servo_arm.write(peek_pos);
   delay(500);
   servo_arm.write(start_pos);
   delay(300);
   for(frustratedCt = 0; frustratedCt <= 3; frustratedCt++)
   {
-    servo_arm.write(60);
+    servo_arm.write(peek_pos);
     delay(100);
     servo_arm.write(start_pos);
     delay(100);
@@ -88,6 +90,9 @@ void frustrated(int frustratedCt = 0)
     frustratedCt = 0;
     Serial.println("Returning to loop method!");
   }
+  servo_arm.write(peek_pos);
+  delay(1000);
+  servo_arm.write(start_pos);
 }
 
 // Slow Move to target
@@ -107,6 +112,14 @@ void slow_move()
     delay(del);
     switchState = digitalRead(10);
   }
+  servo_arm.write(target_pos);
+  delay(50);
+  servo_arm.write(start_pos);
+  delay(500);
+  servo_arm.write(peek_pos);
+  delay(1000);
+  servo_arm.write(start_pos);
+  Serial.println("Returning to loop method!");
 }
 
 // Error Method
@@ -131,7 +144,7 @@ void error()
       Serial.println(pos);
       Serial.println("Current Switch State: ");
       Serial.println(switchState);
-      // Delay 1 second
+      // Delay
       delay(100);
     }
     break;
@@ -186,7 +199,7 @@ void loop()
       Serial.println("Switch toggled! Attempting to turn off!");
       delay(50);
       // Move servo to target deg. (Known hit @ 38 deg)
-      servo_arm.write(60);
+      servo_arm.write(peek_pos);
       delay(750);
       servo_arm.write(target_pos); 
       delay(500);
@@ -206,27 +219,58 @@ void loop()
     }
     while (switchState == LOW && attempts >= 4)
     {
-      // Generate randon number
-      randomNumber = random(5);
+      // Move to peek position & generate ranom number then hold.
+      servo_arm.write(peek_pos);
+      // Generate randon number between 1 & 5
+      randomNumber = random(1,5);
       Serial.println("Random Number is: ");
       Serial.println(randomNumber);
-      // Call frustrated method if randomNumber <= 3
-      if (randomNumber <= 3)
+      delay(1000);
+      // Call slow_move method if randomNumber <= 2
+      if (randomNumber <= 2)
+      {
+        Serial.println("randomNumber <= 2: Calling Slow Move Method!");
+        slow_move();
+        delay(50);
+        attempts = 2;
+        if (switchState == LOW)
+        {
+          Serial.println("Calling Error Method!");
+          error();
+        }
+      }      
+      // Call frustrated method if randomNumber >= 3 & <= 4
+      if (randomNumber == 4)
       {
         Serial.println("randomNumber <= 4: Calling Frustrated Method!");
         frustrated();
         delay(50);
+        if (switchState == LOW)
+        {
+          Serial.println("Calling Error Method!");
+          error();
+        }
       }
       // Call angry method if randomNumber == 5
-      if (randomNumber >=4)
+      if (randomNumber ==5)
       {
         Serial.println("randomNumber >= 5:Calling Angry Method!");
         angry();
         delay(50);
         attempts = 0;
+        if (switchState == LOW)
+        {
+          Serial.println("Calling Error Method!");
+          error();
+        }
       }
       else
       {
+        if (switchState == LOW)
+        {
+          Serial.println("Calling Error Method!");
+          error();
+        }
         break;
       }
       
