@@ -12,6 +12,28 @@ int switchState;
 int attempts = 0;
 
 
+// Setup
+void setup()
+{
+  // Initialize serial
+  Serial.begin(9600);
+  // Initialize servo
+  servo_arm.attach(9);
+  // Set pinMode
+  pinMode(10, INPUT);
+  digitalWrite(10, HIGH);
+  // Move servo to start pos (160 deg)
+  servo_arm.write(start_pos);
+  // Print action to console
+  Serial.println("Moving to start pos!");
+  // Say hi?
+  Serial.println("Calling Hi Method!");
+  say_hi();
+  delay(50);
+  // Print starting loop to console
+  Serial.println("Starting Loop...");
+}
+
 // Hi Method
 void say_hi()
 {
@@ -21,7 +43,6 @@ void say_hi()
   servo_arm.write(start_pos);
   delay(50);
 }
-
 
 // Angry Method
 void angry(int angryCt = 0)
@@ -50,7 +71,6 @@ void angry(int angryCt = 0)
     Serial.println("Returning to loop method!");
   }
 }
-
 
 // Error Method
 void error()
@@ -81,30 +101,7 @@ void error()
   }
 }
 
-
-// Setup
-void setup()
-{
-  // Initialize serial
-  Serial.begin(9600);
-  // Initialize servo
-  servo_arm.attach(9);
-  // Set pinMode
-  pinMode(10, INPUT);
-  digitalWrite(10, HIGH);
-  // Move servo to start pos (160 deg)
-  servo_arm.write(start_pos);
-  // Print action to console
-  Serial.println("Moving to start pos!");
-  // Say hi?
-  Serial.println("Calling Hi Method!");
-  say_hi();
-  delay(50);
-  // Print starting loop to console
-  Serial.println("Starting Loop...");
-}
-
-// Main Program:
+// Main Program Loop:
 void loop()
 { 
   // Read switchState var
